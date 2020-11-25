@@ -21,7 +21,7 @@ int main()
     }
 
     ofstream f;
-    f.open("/Users/samuelruhl/Documents/Uni/Bachlorarbeit/Code/predicting-crystal-phases/Data/genetic_data.txt");
+    f.open("/Users/samuelruhl/predicting_crystal_structures/Data/genetic_data.txt");
     f<<"Generation"<<" "<<"x"<<" "<<"y"<<" "<<"f(x,y)"<<" "<<"fitness"<<"\n";
 
     //perform evolution

@@ -83,6 +83,7 @@ vector<Individual> Individual::pairing(Individual &other){
             //generate crossover dna
             if(j<=cut_pos){
                 tmp_dna1.push_back(dna[i][j]);          //nur ein Kind
+                                                          //elitismus
                 tmp_dna2.push_back(other.dna[i][j]);
             }
             if(j>cut_pos){

@@ -3,17 +3,15 @@
 using namespace std;
 
 
+
 vector<Individual> sort_by_fitness(vector<Individual> I){
     sort(I.begin(),I.end());
     //reverse(I.begin(),I.end());
     return I;
 }
 
-float random_num( float a, float b){
-    return a + (rand() / ( float(RAND_MAX) / (b-a) ) );
-}
 
-vector<Individual> selection(vector<Individual> generation){
+Individual selection(vector<Individual> generation){
     //calculate summit fitness and find the minima fitness by the way
     double fit_sum = 0;
 
@@ -21,14 +19,17 @@ vector<Individual> selection(vector<Individual> generation){
         fit_sum=fit_sum+generation[i].fitness;
         }
    //--------------------------wheel of fortune-------------------------
-    double r1 = rand() / double(RAND_MAX);
+    auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+    auto real_rand = std::bind(std::uniform_real_distribution<float>(0,1),
+                               mt19937(seed));
+    double r1 = real_rand();
     generation = sort_by_fitness(generation);
     //wenn es zu problemen kommt dann hier.
         //partner1
         double sum=0;
         int iter=-1;
         float r1_fit=fit_sum * r1;
-        while(r1_fit>=sum){
+        while(r1_fit>sum){
             iter++;
             sum=sum + generation[iter].fitness;
         }
@@ -38,7 +39,7 @@ vector<Individual> selection(vector<Individual> generation){
         generation.erase(generation.begin()+iter);
         sum=0;
         iter=-1;
-        double r2 = rand() / double(RAND_MAX);
+        double r2 = real_rand();
         float r2_fit=fit_sum * r2;
         while(r2_fit>=sum){
             iter++;

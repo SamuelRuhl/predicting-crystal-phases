@@ -7,15 +7,24 @@
 #include<math.h>
 #include<iterator>
 #include<stdlib.h>
+#include<random>
+#include<chrono>
 
 using namespace std;
 
 const int dna_length = 12;
+const float mutation_prob = 0.1;
+const double lowest_fitness = 10e-20;
+const int n=10; //dim of the generation
+const float a=5;
+const float b=0;
+const int n_generations=1000;
 
 class Individual
 {
 private:
     float bmax=pow(2,dna_length)-1; //maximal binary number
+    int numb_para=2;
 
 public:
     //init
@@ -26,6 +35,7 @@ public:
     float a;
     float b;
     vector<vector<char>> dna = {};
+    vector<char> long_dna = {};
     float phaenom;
     double fitness;
     double rel_fit;
@@ -36,8 +46,8 @@ public:
     void print_dna();
     void set_fitness();
     void set_rel_fit(float summit);
-    void mutation(float probability);
-    vector<Individual> pairing(Individual &other);
+    bool mutation(float probability);
+    Individual pairing(Individual &other);
 
     //overload bigger then operator for siort function
     bool operator< (const Individual &other) const{

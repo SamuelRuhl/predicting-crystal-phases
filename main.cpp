@@ -5,10 +5,10 @@ using namespace std;
 
 int main()
 {
-    int n=50; //dim of the generation
-    float a=5;
-    float b=-5;
-    int n_generations=1000; //anzahl generations
+//    int n=50; //dim of the generation
+//    float a=5;
+//    float b=-5;
+//    int n_generations=1000; //anzahl generations
 
     //init random number generator
 
@@ -23,6 +23,13 @@ int main()
 
     ofstream f;
     f.open("/Users/samuelruhl/predicting_crystal_structures/Data/genetic_data.txt");
+    f<<"genom dna lenght="<<dna_length<<endl;
+    f<<"mutation probability per bit="<<mutation_prob<<endl;
+    f<<"bias fitness="<<lowest_fitness<<endl;
+    f<<"number of Individuals per Generation="<<n<<endl;
+    f<<"number of Generations="<<n_generations<<endl;
+    f<<"Search space [a,b]=["<<a<<','<<b<<']'<<endl;
+
     f<<"Generation"<<" "<<"x"<<" "<<"y"<<" "<<"f(x,y)"<<" "<<"fitness"<<"\n";
     for(int i=0;i<n;i++){
         float x = real_rand();

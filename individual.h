@@ -13,12 +13,13 @@
 using namespace std;
 
 const int dna_length = 12;
-const float mutation_prob = 0.1;
+const float mutation_prob = 1;
 const double lowest_fitness = 10e-20;
-const int n=10; //dim of the generation
-const float a=5;
-const float b=0;
-const int n_generations=1000;
+const int n=20; //dim of the generation
+const int n_generations=100;
+const float a=1.5;
+const float b=-1.5;
+
 
 class Individual
 {

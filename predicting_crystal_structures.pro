@@ -6,8 +6,10 @@ CONFIG -= qt
 SOURCES += \
         functions.cpp \
         individual.cpp \
+        lattice.cpp \
         main.cpp
 
 HEADERS += \
     individual.h \
+    lattice.h \
     main.h

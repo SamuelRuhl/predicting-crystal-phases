@@ -5,22 +5,6 @@ using namespace std;
 
 int main()
 {
-//    int n=50; //dim of the generation
-//    float a=5;
-//    float b=-5;
-//    int n_generations=1000; //anzahl generations
-
-    //init random number generator
-
-
-    //create generation with random values.
-    vector<Individual> gen;
-
-    auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
-    auto real_rand = std::bind(std::uniform_real_distribution<float>(a,b),
-                               mt19937(seed));
-
-
     ofstream f;
     f.open("/Users/samuelruhl/predicting_crystal_structures/Data/genetic_data.txt");
     f<<"genom dna lenght="<<dna_length<<endl;
@@ -31,6 +15,14 @@ int main()
     f<<"Search space [a,b]=["<<a<<','<<b<<']'<<endl;
 
     f<<"Generation"<<" "<<"x"<<" "<<"y"<<" "<<"f(x,y)"<<" "<<"fitness"<<"\n";
+
+    //init random number generator
+    auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+    auto real_rand = std::bind(std::uniform_real_distribution<float>(a,b),
+                               mt19937(seed));
+
+    //set up random generation
+    vector<Individual> gen;
     for(int i=0;i<n;i++){
         float x = real_rand();
         float y = real_rand();

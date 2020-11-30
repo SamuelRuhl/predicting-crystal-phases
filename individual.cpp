@@ -1,39 +1,9 @@
 #include "individual.h"
+#include "main.h"
+
 
 auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
 mt19937 mt(seed);
-
-//transforms int to a binary number stoared in a charakter vector
-vector<char> to_binary(int n){
-    vector<char> c;
-    for(int i=dna_length-1;i>=0;i--){
-        if((n-pow(2,i)) >= 0){
-            c.push_back('1');
-            n=n-pow(2,i);
-        }else{
-            c.push_back('0');
-        }
-    }
-    return c;
-}
-
-int to_int(vector<char> c){
-    int n=0;
-    for(int i=dna_length-1;i>=0;i--){
-        if(c[i]=='1'){
-            n=n+pow(2,dna_length-i-1);
-        }
-    }
-    return n;
-}
-
-//Rosenbrock function f(x,y) = (1-x)^2 + 100(y-x^2)^2 only 2d vector possible x[0] = x; x[1]=y
-float Rosenbrock(vector<float> x){
-    return (1-x[0])*(1-x[0]) + 100*(x[1]-x[0]*x[0])*(x[1]-x[0]*x[0]);
-}
-
-
-
 
 //----------------------class starts here-------------------------------
 

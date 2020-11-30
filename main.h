@@ -10,12 +10,16 @@
 #include<iterator>
 #include<stdlib.h>
 #include "individual.h"
+#include "lattice.h"
 
 using namespace std;
+vector<char> to_binary(int n);
+int to_int(vector<char> c);
+float Rosenbrock(vector<float> x);
 Individual selection(vector<Individual> generation);
-float random_num( float a, float b);
 vector<Individual> sort_by_fitness(vector<Individual> I);
-void write_data_to_file(vector<vector<Individual>> I);
+lattice lattice_selection(vector<lattice> generation);
+vector<lattice> sort_lattice_by_fitness(vector<lattice> I);
 
 #endif // MAIN_H
 

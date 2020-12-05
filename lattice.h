@@ -49,11 +49,12 @@ public:
     lattice(vector<float> z);
 
     //attributes
-    vector<float> genom; //vector of parameter x,y,theta,psi,phi in that oreder
+    vector<float> genom; //vector of parameter x,y,theta,psi,phi in that order
     vector<vector<float>> x; //primitiv lattice vectors eq. (1) in ref.1
     vector<vector<char>> para_dna = {};
     vector<char> long_dna = {}; //all para DNA's attached to one
     double lattice_sum;
+    double surface;
     double fitness;
     double rel_fit; //relative fitness in ref. to the generation
     int generation;
@@ -63,6 +64,7 @@ public:
     void print_dna();
     void print_long_dna();
     void set_primitiv_lattice();
+    void set_surface();
     void minimize_surface(); //to ensure uniqueness
     void set_lattice_sum();
     void set_fitness();

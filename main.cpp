@@ -3,6 +3,16 @@
 using namespace std;
 
 
+#if 1
+// ------------------ predicting crystal structures --------------------
+int main(){
+    lattice fcc = lattice({0.5,1,M_PI/2,M_PI/2,M_PI/2});
+    cout<<fcc.lattice_sum<<endl;
+    cout<<fcc.fitness<<endl;
+}
+
+#else
+// ----------- find zero-points of the Rosenbrockfunktion ----------------
 int main()
 {
     ofstream f;
@@ -51,3 +61,4 @@ int main()
     winner.print_dna();
     cout<<winner.fitness<<endl;
 }
+#endif

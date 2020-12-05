@@ -2,10 +2,13 @@
 #include "main.h"
 
 lattice::lattice(vector<float> z):genom(z){
-//    set_dna();
-//    set_lattice_sum();
-//    set_fitness();
-//    set_prmitiv_lattice();
+    //it is importaned to set the variables in this order !
+    set_dna();
+    set_primitiv_lattice();
+    set_surface();
+    minimize_surface();
+    set_lattice_sum();
+    set_fitness();
 }
 
 void lattice::set_dna(){
@@ -45,17 +48,89 @@ void lattice::print_long_dna(){
 
 void lattice::set_primitiv_lattice(){
     x={{1,0,0},                                                 // x1 = (1,0,0)
-       {genom[0] * cos(genom[2]), genom[0] * sin(genom[2]), 1}, // x2 = (xcos(theta),xsin(theta),0)
+       {genom[0] * cos(genom[2]), genom[0] * sin(genom[2]), 0}, // x2 = (xcos(theta),xsin(theta),0)
        {genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    // x3 = (xycos(psi)sin(phi),
         genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    //       xycos(psi)sin(phi),
-       genom[0] * genom[1] * sin(genom[4])}};                   //       xysin(phi))
+        genom[0] * genom[1] * sin(genom[4])}};                   //       xysin(phi))
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            cout<<x[i][j]<<',';
+        }
+        cout<<endl;
+    }
 }
 
-//void lattice::minimize_surface(){} //eq.(7) from ref.(1)
+void lattice::set_surface(){
+    surface=calc_surface(x);
+}
 
-//void lattice::set_lattice_sum(){} // eq.(11) from ref.(1)
+void lattice::minimize_surface(){               //eq.(7) from ref.(1)
+    vector<vector<float>> best_x = x;
+    vector<vector<float>> tmp_x;
+    //  could be more sophisticated
+    // try all 12 cases
+    char c[] = {'+','-'};
+    for(int i = 0; i < 2; i++){
+        //1.
+        tmp_x = {sum_vectors(x[0],x[1],c[i]),x[1],x[2]};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+           best_x = tmp_x;
+        }
+        //2.
+        tmp_x = {x[0],sum_vectors(x[1],x[0],c[i]),x[2]};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+            best_x = tmp_x;
+        }
+        //3.
+        tmp_x = {x[0],x[1],sum_vectors(x[2],x[0],c[i])};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+            best_x = tmp_x;
+        }
+        //4.
+        tmp_x = {sum_vectors(x[0],x[2],c[i]),x[1],x[2]};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+           best_x = tmp_x;
+        }
+        //5.
+        tmp_x = {x[0],sum_vectors(x[1],x[2],c[i]),x[2]};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+            best_x = tmp_x;
+        }
+        //6.
+        tmp_x = {x[0],x[1],sum_vectors(x[2],x[1],c[i])};
+        if(calc_surface(tmp_x) < calc_surface(best_x)){
+            best_x = tmp_x;
+        }
+    }
+    if(surface > calc_surface(best_x)){
+        x=best_x;
+           set_dna();
+           set_primitiv_lattice();
+           set_surface();
+           set_lattice_sum();
+           set_fitness();
+    }
+}
 
-//void lattice::set_fitness(){}
+void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
+    double L = 0;
+    int interaction_range = 8; //could also define as constant //8 gives the same value as 200
+    for(int l = 1; l < interaction_range; l++){
+        for(int k = 1; k < interaction_range; k++){
+            for(int m = 1; m < interaction_range; m++){
+                L = L + exp(-l * l * vec_product(x[0]) * vec_product(x[0])
+                        - k * k * vec_product(x[1]) * vec_product(x[1])
+                        - m * m * vec_product(x[2]) * vec_product(x[2]));
+            }
+        }
+    }
+    lattice_sum = 0.5*L;
+}
+
+void lattice::set_fitness(){
+    //use f=(exp(1-L/L(fcc))
+    fitness = exp(1-lattice_sum/0.312752); //lattice_sum off fcc 0.31275
+}
 
 
 

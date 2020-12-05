@@ -123,4 +123,38 @@ lattice lattice_selection(vector<lattice> generation){
     return partner1.pairing(partner2);
 }
 
+vector<float> cross_product(vector<float> a, vector<float> b){
+    vector<float> c;
+    float x1 = a[1] * b[2] - a[2] * b[1];
+    float x2 = a[2] * b[0] - a[0] * a[2];
+    float x3 = a[0] * b[1] - a[1] * b[0];
+    c={x1,x2,x3};
+    return c;
+}
 
+float vec_product(vector<float> a){
+    float abs=0;
+    for(int i=0; i < int(a.size()); i++){
+        abs = abs + a[i] * a[i];
+    }
+    return sqrt(abs);
+}
+
+float calc_surface(vector<vector<float>> x){
+    return  (vec_product(cross_product(x[0],x[1]))
+            + vec_product(cross_product(x[0],x[2]))
+            + vec_product(cross_product(x[1],x[2])));
+}
+
+vector<float> sum_vectors(vector<float> a, vector<float> b, char o){
+    vector<float> c;
+    for(int i = 0 ; i < int(a.size()); i++){
+        if(o=='-'){
+            c.push_back(a[i]-b[i]);
+        }
+        else{
+            c.push_back(a[i]+b[i]);
+        }
+    }
+    return c;
+}

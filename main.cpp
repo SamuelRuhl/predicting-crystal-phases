@@ -7,15 +7,13 @@ using namespace std;
 // ------------------ predicting crystal structures --------------------
 int main(){
     //check if fcc is the fittest structure
-    lattice fc = lattice({0.7071067812,1,M_PI/2,M_PI/2,M_PI/2});
-    fc.print_long_dna();
-    lattice sc = lattice({1,1,M_PI/2,M_PI,M_PI/2});
-    sc.print_long_dna();
-    lattice fcc= fc.pairing(sc);
+    lattice fcc = lattice({0.7071067812,1,M_PI/2,M_PI/2,M_PI/2});
     cout<<fcc.lattice_sum<<endl;
     cout<<fcc.fitness<<endl;
     fcc.print_long_dna();
-//}
+    cout<<"--------------new test----------------"<<endl;
+    cout<<vec_product(cross_product({3,-5,2},{-1,2,3}))<<endl;
+//{
 //#else
     //generate random Population
     ofstream f;

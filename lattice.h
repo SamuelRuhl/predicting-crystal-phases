@@ -17,11 +17,13 @@ using namespace std;
 const int dna_length_x = 12; //strain lenght for x,y
 const int dna_length_phi = 6; //strain lenght for phi,psi and theta
 
-//general routine settings
-const float mutation_prob = 0.1;
-const double lowest_fitness = 10e-20;
+const float density = 1;
 
-const int n=50; //Number of individuals per generation
+//general routine settings
+const float mutation_prob = 0.01;
+const double lowest_fitness = 10e-25;
+
+const int n=1000; //Number of individuals per generation
 const int n_generations=100; //Number of generations
 
 // Interval boarders for x and y
@@ -35,6 +37,9 @@ const float b_phi=0.001;
 // Interval boarders for psi
 const float a_psi=M_PI;
 const float b_psi=0.001;
+
+//referenc value to determine fitness
+const float fcc_lattice_sum = 0.31275;
 
 
 
@@ -72,6 +77,7 @@ public:
     bool mutation();
     lattice pairing(lattice &other);
     bool mutation(float probability);
+    void calc_genom_from_x();
 
     //overload bigger then operator for siort function
     bool operator< (const lattice &other) const{

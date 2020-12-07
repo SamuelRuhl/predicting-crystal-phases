@@ -24,6 +24,7 @@ vector<float> cross_product(vector<float> a, vector<float> b);
 float vec_product(vector<float> a);
 float calc_surface(vector<vector<float>> x);
 vector<float> sum_vectors(vector<float> a, vector<float> b, char o);
+void print_vec(vector<float> a);
 
 #endif // MAIN_H
 

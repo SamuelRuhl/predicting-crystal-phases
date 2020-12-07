@@ -16,12 +16,20 @@ void lattice::set_dna(){
         if(i<2){
             //equation (5)  from paper Gottwald, Kahl, Likos
             int b_x = genom[i]*(b_max_12 + 1) - 1; //use equation (5)
-            para_dna.push_back(to_binary(b_x));
+            para_dna.push_back(to_binary(b_x, dna_length_x));
         }
-        else{
+        if(i == 2){
             //equation (6)  from paper Gottwald, Kahl, Likos
             int b_phi = 2/M_PI * genom[i] * (b_max_6 + 1) - 1;
-            para_dna.push_back(to_binary(b_phi));
+            para_dna.push_back(to_binary(b_phi, dna_length_phi));
+        }
+        if(i == 3){
+            int b_psi = 1/M_PI * genom[i] * (b_max_6 + 1) - 1;
+            para_dna.push_back(to_binary(b_psi, dna_length_phi));
+        }
+        if(i == 4){
+            int b_psi = 2/M_PI * genom[i] * (b_max_6 + 1) - 1;
+            para_dna.push_back(to_binary(b_psi, dna_length_phi));
         }
     }
     for(int i=0; i < int(para_dna.size()); i++){
@@ -34,8 +42,9 @@ void lattice::set_dna(){
 void lattice::print_dna(){
     for(int i=0;i<int(para_dna.size());i++){
         for(int j=0;j<int(para_dna[i].size());j++){
-            cout<<para_dna[i][j]<<endl;
+            cout<<para_dna[i][j];
         }
+        cout<<endl;
     }
 }
 
@@ -52,12 +61,7 @@ void lattice::set_primitiv_lattice(){
        {genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    // x3 = (xycos(psi)sin(phi),
         genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    //       xycos(psi)sin(phi),
         genom[0] * genom[1] * sin(genom[4])}};                   //       xysin(phi))
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 3; j++){
-            cout<<x[i][j]<<',';
-        }
-        cout<<endl;
-    }
+
 }
 
 void lattice::set_surface(){
@@ -104,11 +108,8 @@ void lattice::minimize_surface(){               //eq.(7) from ref.(1)
     }
     if(surface > calc_surface(best_x)){
         x=best_x;
-           set_dna();
-           set_primitiv_lattice();
-           set_surface();
-           set_lattice_sum();
-           set_fitness();
+        cout<<"find better x"<<endl;
+        //have to add something
     }
 }
 
@@ -118,7 +119,7 @@ void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
     for(int l = 1; l < interaction_range; l++){
         for(int k = 1; k < interaction_range; k++){
             for(int m = 1; m < interaction_range; m++){
-                L = L + exp(-l * l * vec_product(x[0]) * vec_product(x[0])
+                L = L + exp((-1) * l * l * vec_product(x[0]) * vec_product(x[0])
                         - k * k * vec_product(x[1]) * vec_product(x[1])
                         - m * m * vec_product(x[2]) * vec_product(x[2]));
             }
@@ -129,7 +130,7 @@ void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
 
 void lattice::set_fitness(){
     //use f=(exp(1-L/L(fcc))
-    fitness = exp(1-lattice_sum/0.312752); //lattice_sum off fcc 0.31275
+    fitness = exp(1-lattice_sum/0.0085131); //lattice_sum off fcc 0.31275
 }
 
 
@@ -171,15 +172,24 @@ lattice lattice::pairing(lattice &other){
     vector<float> genom_kid;
     int jump=0;
     for(int i = 0; i < int(para_dna.size());i++){
-        vector<char> tmp_dna;
-        for(int j = 0; j < int(para_dna[i].size());i++){
+        vector<char> tmp_dna={};
+        for(int j = 0; j < int(para_dna[i].size());j++){
             tmp_dna.push_back(long_dna[j+jump]);
         }
         //using here eq. (5) and (6) from Gottwald, Kahl and Likos
         if(i<2){
             genom_kid.push_back((to_int(tmp_dna) + 1)/(b_max_12 + 1));
             jump=jump + dna_length_x;
-        }else{
+        }
+        if(i==2){
+            genom_kid.push_back(M_PI/2  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
+            jump=jump + dna_length_phi;
+        }
+        if(i==3){
+            genom_kid.push_back(M_PI  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
+            jump=jump + dna_length_phi;
+        }
+        if(i==4){
             genom_kid.push_back(M_PI/2  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
             jump=jump + dna_length_phi;
         }

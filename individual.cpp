@@ -18,7 +18,7 @@ void Individual::set_dna(){
         float tmp_x=(genom[i]-b);   //shift x by -b
         float resolution=abs(a-b)/bmax;  //used here n=(genom[i]-b)*bmax/|a-b|
         int n=tmp_x/resolution;
-        dna.push_back(to_binary(n));
+        dna.push_back(to_binary(n, dna_length));
     }
     for(int i=0; i < int(dna.size()); i++){
         for(int j=0; j < int(dna[i].size()); j++){

@@ -13,7 +13,7 @@
 #include "lattice.h"
 
 using namespace std;
-vector<char> to_binary(int n);
+vector<char> to_binary(int n, int lenght_dna = 12);
 int to_int(vector<char> c);
 float Rosenbrock(vector<float> x);
 Individual selection(vector<Individual> generation);

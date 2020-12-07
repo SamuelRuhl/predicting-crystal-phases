@@ -3,9 +3,9 @@
 using namespace std;
 
 //transforms int to a binary number stoared in a charakter vector
-vector<char> to_binary(int n){
+vector<char> to_binary(int n, int lenght_dna){
     vector<char> c;
-    for(int i=dna_length-1;i>=0;i--){
+    for(int i=lenght_dna-1;i>=0;i--){
         if((n-pow(2,i)) >= 0){
             c.push_back('1');
             n=n-pow(2,i);
@@ -18,9 +18,9 @@ vector<char> to_binary(int n){
 
 int to_int(vector<char> c){
     int n=0;
-    for(int i=dna_length-1;i>=0;i--){
+    for(int i=int(c.size())-1;i>=0;i--){
         if(c[i]=='1'){
-            n=n+pow(2,dna_length-i-1);
+            n=n+pow(2,int(c.size())-i-1);
         }
     }
     return n;

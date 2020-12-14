@@ -1,12 +1,13 @@
 #include "lattice.h"
 #include "main.h"
 
-lattice::lattice(vector<float> z):genom(z){
+lattice::lattice(vector<float> z, float density):genom(z){
     //it is importaned to set the variables in this order !
+    rho=density;
     set_dna();
     set_primitiv_lattice();
     set_surface();
-    minimize_surface();
+    //minimize_surface();
     set_lattice_sum();
     set_fitness();
 }
@@ -77,7 +78,7 @@ void lattice::minimize_surface(){               //eq.(7) from ref.(1)
     bool check = true;
     //  could be more sophisticated
     // try all 12 cases
-    char c[] = {'+'}; //should also run over {'-'}
+    char c[] = {'+','-'}; //should also run over {'-'}
     while(check){
         last_best_x = best_x;
         for(int i = 0; i < 2; i++){
@@ -118,9 +119,8 @@ void lattice::minimize_surface(){               //eq.(7) from ref.(1)
     }
     if(surface > calc_surface(best_x)){
         x=last_best_x;
-        calc_genom_from_x();
-
-        set_dna();
+        //calc_genom_from_x();
+        //set_dna();
         set_surface();
         set_lattice_sum();
         set_fitness();
@@ -135,13 +135,13 @@ void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
     for(int l = 1; l < interaction_range; l++){
         for(int k = 1; k < interaction_range; k++){
             for(int m = 1; m < interaction_range; m++){
-                L = L + exp((-density)*(l * l * vec_product(x[0]) * vec_product(x[0])
+                L = L + exp((-1/rho)*(l * l * vec_product(x[0]) * vec_product(x[0])
                         + k * k * vec_product(x[1]) * vec_product(x[1])
                         + m * m * vec_product(x[2]) * vec_product(x[2])));
             }
         }
     }
-    lattice_sum = 0.5*L;
+    lattice_sum = 2*L;
 }
 
 void lattice::set_fitness(){
@@ -188,30 +188,30 @@ lattice lattice::pairing(lattice &other){
     vector<float> genom_kid;
     int jump=0;
     for(int i = 0; i < int(para_dna.size());i++){
-        vector<char> tmp_dna={};
+        vector<char> tmp;
         for(int j = 0; j < int(para_dna[i].size());j++){
-            tmp_dna.push_back(long_dna[j+jump]);
+            tmp.push_back(tmp_dna[kid_number][j+jump]);
         }
         //using here eq. (5) and (6) from Gottwald, Kahl and Likos
         if(i<2){
-            genom_kid.push_back((to_int(tmp_dna) + 1)/(b_max_12 + 1));
+            genom_kid.push_back((to_int(tmp) + 1)/(b_max_12 + 1));
             jump=jump + dna_length_x;
         }
         if(i==2){
-            genom_kid.push_back(M_PI/2  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
+            genom_kid.push_back(M_PI/2  * (to_int(tmp) + 1)/(b_max_6 + 1));
             jump=jump + dna_length_phi;
         }
         if(i==3){
-            genom_kid.push_back(M_PI  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
+            genom_kid.push_back(M_PI  * (to_int(tmp) + 1)/(b_max_6 + 1));
             jump=jump + dna_length_phi;
         }
         if(i==4){
-            genom_kid.push_back(M_PI/2  * (to_int(tmp_dna) + 1)/(b_max_6 + 1));
+            genom_kid.push_back(M_PI/2  * (to_int(tmp) + 1)/(b_max_6 + 1));
             jump=jump + dna_length_phi;
         }
     }
 
-    lattice kid = lattice(genom_kid);
+    lattice kid = lattice(genom_kid,rho);
 
     return kid;
 
@@ -227,8 +227,6 @@ bool lattice::mutation(float probability){
 
 
 void lattice::calc_genom_from_x(){
-    //assume y = 1
-    genom[1]=1;
     //theta=arctan(x_2,2/x_2,1)
     genom[2]=atan(x[1][1]/x[1][0]);
     //x=x_2,2/sin(theta)
@@ -237,6 +235,18 @@ void lattice::calc_genom_from_x(){
     genom[4]=asin(x[2][2]);
     //psi=arcos(x_3,1/(x*cos(phi))
     genom[3]=acos(x[2][2]/(genom[0]*cos(genom[4])));
+    //y=asin(x3,3/x)
+    genom[2]=asin(x[2][2]/genom[0]);
 
 
+}
+
+void lattice::print_x(){
+    cout<<"x1 =("<<x[0][0]<<","<<x[0][1]<<","<<x[0][2]<<")"<<endl;
+    cout<<"x2 =("<<x[1][0]<<","<<x[1][1]<<","<<x[1][2]<<")"<<endl;
+    cout<<"x3 =("<<x[2][0]<<","<<x[2][1]<<","<<x[2][2]<<")"<<endl;
+}
+
+void lattice::print_genom(){
+    cout<<"x="<<genom[0]<<" "<<"y="<<genom[1]<<" "<<"phi="<<genom[2]<<" "<<"psi="<<genom[3]<<" "<<"theta="<<genom[4]<<endl;
 }

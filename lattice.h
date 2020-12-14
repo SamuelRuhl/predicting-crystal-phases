@@ -17,7 +17,6 @@ using namespace std;
 const int dna_length_x = 12; //strain lenght for x,y
 const int dna_length_phi = 6; //strain lenght for phi,psi and theta
 
-const float density = 1;
 
 //general routine settings
 const float mutation_prob = 0.01;
@@ -39,7 +38,7 @@ const float a_psi=M_PI;
 const float b_psi=0.001;
 
 //referenc value to determine fitness
-const float fcc_lattice_sum = 0.31275;
+const float fcc_lattice_sum = 0.10484;
 
 
 
@@ -49,9 +48,10 @@ private:
     float b_max_12=pow(2,dna_length_x);
     float b_max_6=pow(2,dna_length_phi);
     int numb_para=5;
+    float rho;
 public:
     //init: gets vector of lenght equal to number_para
-    lattice(vector<float> z);
+    lattice(vector<float> z,float density);
 
     //attributes
     vector<float> genom; //vector of parameter x,y,theta,psi,phi in that order
@@ -78,6 +78,8 @@ public:
     lattice pairing(lattice &other);
     bool mutation(float probability);
     void calc_genom_from_x();
+    void print_x();
+    void print_genom();
 
     //overload bigger then operator for siort function
     bool operator< (const lattice &other) const{

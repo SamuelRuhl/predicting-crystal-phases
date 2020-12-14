@@ -51,7 +51,6 @@ Individual selection(vector<Individual> generation){
                                mt19937(seed));
     double r1 = real_rand();
     generation = sort_by_fitness(generation);
-    //wenn es zu problemen kommt dann hier.
         //partner1
         double sum=0;
         int iter=-1;

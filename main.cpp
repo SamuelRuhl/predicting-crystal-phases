@@ -7,13 +7,32 @@ using namespace std;
 // ------------------ predicting crystal structures --------------------
 int main(){
     //check if fcc is the fittest structure
-    lattice fcc = lattice({0.7071067812,1,M_PI/2,M_PI/2,M_PI/2});
-    cout<<fcc.lattice_sum<<endl;
-    cout<<fcc.fitness<<endl;
-    fcc.print_long_dna();
-    cout<<"--------------new test----------------"<<endl;
-    cout<<vec_product(cross_product({3,-5,2},{-1,2,3}))<<endl;
-//{
+    lattice test=lattice({0.3,0.7,1.1,1.9,0.5},1);
+
+    cout<<"1)"<<endl;
+
+    test.print_genom();
+    //test.print_x();
+    test.print_dna();
+
+    cout<<"2)"<<endl;
+
+    test=test.pairing(test);
+    test.print_genom();
+    //test.print_x();
+    test.print_dna();
+
+    cout<<"3)"<<endl;
+    test.print_x();
+
+    cout<<"4) Fläsche:"<<endl;
+    cout<<test.surface<<endl;
+
+    cout<<"5) Minimierung:"<<endl;
+    test.minimize_surface();
+    test.print_x();
+    cout<<test.surface<<endl;
+
 //#else
     //generate random Population
     ofstream f;
@@ -25,6 +44,8 @@ int main(){
 
     f<<"Generation"<<" "<<"x"<<" "<<"y"<<" "<<"theta"<<" "<<"psi"<<" "
      <<"phi"<<" "<<"lattice_sum"<<" "<<"fitness"<<"\n";
+
+    float rho = 1;
 
     //init random number generator
     auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
@@ -44,7 +65,7 @@ int main(){
         vector<float> random_para = {x_y_rand(), x_y_rand(),
                                      theta_phi_rand(), psi_rand(),
                                      theta_phi_rand()};
-        gen.push_back(lattice(random_para));
+        gen.push_back(lattice(random_para,rho));
         f<<0<<" "<<gen[i].genom[0]<<" "<<gen[i].genom[1]<<" "<<gen[i].genom[2]<<
            " "<<gen[i].genom[3]<<" "<<gen[i].genom[4]<<" "<<gen[i].lattice_sum<<
            " "<<gen[i].fitness<<"\n";
@@ -83,7 +104,7 @@ int main(){
     cout<<"fitness:"<<winner.fitness<<endl;
     cout<<"lattice sum:"<<winner.lattice_sum<<endl;
 
-}
+
 
 #else
 // ----------- find zero-points of the Rosenbrockfunktion ----------------
@@ -134,5 +155,6 @@ int main()
     cout<<"x="<<winner.genom[0]<<" y="<<winner.genom[1]<<" bei "<<winner.phaenom<<" mit  DNA:";
     winner.print_dna();
     cout<<winner.fitness<<endl;
-}
 #endif
+}
+

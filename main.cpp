@@ -8,6 +8,9 @@ using namespace std;
 int main(){
     //check if fcc is the fittest structure
     lattice test=lattice({0.3,0.7,1.1,1.9,0.5},1);
+    lattice fcc=lattice({1,1,M_PI/4,0.0001,M_PI/4},1);
+    fcc.print_x();
+    cout<<fcc.fitness<<endl;
 
     cout<<"1)"<<endl;
 
@@ -33,10 +36,15 @@ int main(){
     test.print_x();
     cout<<test.surface<<endl;
 
+//    float rho = 1;
 //#else
+
+    //run for rho [1,10]
+    for(float rho = 1; rho <= 20; rho=rho+5){
     //generate random Population
     ofstream f;
-    f.open("/Users/samuelruhl/predicting_crystal_structures/Data/crystal_data.txt");
+    string s = to_string(rho);
+    f.open("/Users/samuelruhl/predicting_crystal_structures/Data/crystal_data_"+s+".txt");
     f<<"mutation probability per bit="<<mutation_prob<<endl;
     f<<"bias fitness="<<lowest_fitness<<endl;
     f<<"number of Individuals per Generation="<<n<<endl;
@@ -45,12 +53,12 @@ int main(){
     f<<"Generation"<<" "<<"x"<<" "<<"y"<<" "<<"theta"<<" "<<"psi"<<" "
      <<"phi"<<" "<<"lattice_sum"<<" "<<"fitness"<<"\n";
 
-    float rho = 1;
+
 
     //init random number generator
     auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
     //random number between 0 < x <= 1
-    auto x_y_rand = std::bind(std::uniform_real_distribution<float>(a_x,b_y),
+    auto x_y_rand = std::bind(std::uniform_real_distribution<float>(0.001,1),
                                mt19937(seed));
     //random number between 0 < phi <= pi/2
     auto theta_phi_rand = std::bind(std::uniform_real_distribution<float>(a_phi,b_phi),
@@ -60,7 +68,7 @@ int main(){
                                    mt19937(seed));
 
     //set up random generation
-    vector<lattice> gen;
+    vector<lattice> gen = {};
     for(int i = 0; i < n; i++){
         vector<float> random_para = {x_y_rand(), x_y_rand(),
                                      theta_phi_rand(), psi_rand(),
@@ -72,7 +80,8 @@ int main(){
     }
 
     //perform evolution
-    vector<vector<lattice>> Generations = {gen};
+    vector<vector<lattice>> Generations = {};
+    Generations.push_back(gen);
     for(int i = 0; i < n_generations; i++){
         vector<lattice> tmp_gen = {};
         //elithism: store the fittest in the new generation
@@ -104,7 +113,7 @@ int main(){
     cout<<"fitness:"<<winner.fitness<<endl;
     cout<<"lattice sum:"<<winner.lattice_sum<<endl;
 
-
+}
 
 #else
 // ----------- find zero-points of the Rosenbrockfunktion ----------------

@@ -9,6 +9,7 @@
 #include<math.h>
 #include<iterator>
 #include<stdlib.h>
+#include<string.h>
 #include "individual.h"
 #include "lattice.h"
 

@@ -10,6 +10,28 @@ lattice::lattice(vector<float> z, float density):genom(z){
     //minimize_surface();
     set_lattice_sum();
     set_fitness();
+    //set fcc lattice sum for the given density
+    fcc_lattice_sum=0;
+    int interaction_range = 8; //could also define as constant //8 gives the same value as 200
+    for(int l = 1; l < interaction_range; l++){
+        for(int k = 0; k < interaction_range; k++){
+            for(int m = 0; m < interaction_range; m++){
+                fcc_lattice_sum = fcc_lattice_sum + exp((-1/(rho))*(l * l
+                        + k * k
+                        + m * m ));
+            }
+        }
+    }
+    for(int k=1; k < interaction_range; k++ ){
+        for(int m=0; m < interaction_range; m++){
+            fcc_lattice_sum = fcc_lattice_sum + exp((-1/rho)*( k *k * vec_product(x[1]) * vec_product(x[1])   //(0,k,m)
+                   + m * m * vec_product(x[2]) * vec_product(x[2])));
+        }
+    }
+    for(int m=1; m < interaction_range; m++){
+        fcc_lattice_sum = fcc_lattice_sum + exp((-1/rho) * m * m * vec_product(x[2]) * vec_product(x[2]));
+    }
+    fcc_lattice_sum = fcc_lattice_sum * 2;
 }
 
 void lattice::set_dna(){
@@ -61,8 +83,8 @@ void lattice::print_long_dna(){
 void lattice::set_primitiv_lattice(){
     x={{1,0,0},                                                 // x1 = (1,0,0)
        {genom[0] * cos(genom[2]), genom[0] * sin(genom[2]), 0}, // x2 = (xcos(theta),xsin(theta),0)
-       {genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    // x3 = (xycos(psi)sin(phi),
-        genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    //       xycos(psi)sin(phi),
+       {genom[0] * genom[1] * cos(genom[3]) * cos(genom[4]),    // x3 = (xysin(psi)sin(phi),
+        genom[0] * genom[1] * sin(genom[3]) * cos(genom[4]),    //       xycos(psi)sin(phi),
         genom[0] * genom[1] * sin(genom[4])}};                   //       xysin(phi))
 
 }
@@ -133,20 +155,29 @@ void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
     double L = 0;
     int interaction_range = 8; //could also define as constant //8 gives the same value as 200
     for(int l = 1; l < interaction_range; l++){
-        for(int k = 1; k < interaction_range; k++){
-            for(int m = 1; m < interaction_range; m++){
+        for(int k = 0; k < interaction_range; k++){
+            for(int m = 0; m < interaction_range; m++){
                 L = L + exp((-1/rho)*(l * l * vec_product(x[0]) * vec_product(x[0])
                         + k * k * vec_product(x[1]) * vec_product(x[1])
                         + m * m * vec_product(x[2]) * vec_product(x[2])));
             }
         }
     }
+    for(int k=1; k < interaction_range; k++ ){
+        for(int m=0; m < interaction_range; m++){
+            L = L + exp((-1/rho)*( k *k * vec_product(x[1]) * vec_product(x[1])   //(0,k,m)
+                   + m * m * vec_product(x[2]) * vec_product(x[2])));
+        }
+    }
+    for(int m=1; m < interaction_range; m++){
+        L = L + exp((-1/rho) * m * m * vec_product(x[2]) * vec_product(x[2])); //(0,0,m)
+    }
     lattice_sum = 2*L;
 }
 
 void lattice::set_fitness(){
     //use f=(exp(1-L/L(fcc))
-    fitness = exp(1-lattice_sum/fcc_lattice_sum); //lattice_sum off fcc 0.31275
+    fitness = exp(1-lattice_sum/fcc_lattice_sum);
 }
 
 
@@ -223,22 +254,6 @@ bool lattice::mutation(float probability){
     int p=100/probability;
     uniform_int_distribution<int> prob(0,p);
     return prob(mt);
-}
-
-
-void lattice::calc_genom_from_x(){
-    //theta=arctan(x_2,2/x_2,1)
-    genom[2]=atan(x[1][1]/x[1][0]);
-    //x=x_2,2/sin(theta)
-    genom[0]=x[1][1]/sin(genom[2]);
-    //phi=arcsin(x3.3)
-    genom[4]=asin(x[2][2]);
-    //psi=arcos(x_3,1/(x*cos(phi))
-    genom[3]=acos(x[2][2]/(genom[0]*cos(genom[4])));
-    //y=asin(x3,3/x)
-    genom[2]=asin(x[2][2]/genom[0]);
-
-
 }
 
 void lattice::print_x(){

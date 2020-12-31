@@ -6,44 +6,29 @@ using namespace std;
 #if 1
 // ------------------ predicting crystal structures --------------------
 int main(){
-    //check if fcc is the fittest structure
-    lattice test=lattice({0.3,0.7,1.1,1.9,0.5},1);
-    lattice fcc=lattice({1,1,M_PI/4,0.0001,M_PI/4},1);
-    fcc.print_x();
-    cout<<fcc.fitness<<endl;
+lattice fcc=lattice({1,1,M_PI/4,M_PI/2,M_PI/4},0.7,1);
+lattice bcc = lattice({1,1,0,0,0},0.7,1);
+fcc.print_x();
+bcc.print_x();
+cout<<setprecision(40);
+cout<<fcc.lattice_sum<<endl;
+cout<<bcc.lattice_sum<<endl;
 
-    cout<<"1)"<<endl;
 
-    test.print_genom();
-    //test.print_x();
-    test.print_dna();
 
-    cout<<"2)"<<endl;
 
-    test=test.pairing(test);
-    test.print_genom();
-    //test.print_x();
-    test.print_dna();
 
-    cout<<"3)"<<endl;
-    test.print_x();
 
-    cout<<"4) Fläsche:"<<endl;
-    cout<<test.surface<<endl;
-
-    cout<<"5) Minimierung:"<<endl;
-    test.minimize_surface();
-    test.print_x();
-    cout<<test.surface<<endl;
-
-//    float rho = 1;
-//#else
+#else
 
     //run for rho [1,10]
-    for(float rho = 1; rho <= 20; rho=rho+5){
+    for(float ar = 530; ar < 540; ar=ar + 5){
     //generate random Population
+    lattice fcc=lattice({1,1,M_PI/4,M_PI/2,M_PI/4},ar/1000,1);
+    cout<<"fcc lattice sum = "<<fcc.lattice_sum<<endl;
+    cout<<"rho = "<< pow(ar/1000,3)<<endl;
     ofstream f;
-    string s = to_string(rho);
+    string s = to_string(float(ar/18));
     f.open("/Users/samuelruhl/predicting_crystal_structures/Data/crystal_data_"+s+".txt");
     f<<"mutation probability per bit="<<mutation_prob<<endl;
     f<<"bias fitness="<<lowest_fitness<<endl;
@@ -73,7 +58,7 @@ int main(){
         vector<float> random_para = {x_y_rand(), x_y_rand(),
                                      theta_phi_rand(), psi_rand(),
                                      theta_phi_rand()};
-        gen.push_back(lattice(random_para,rho));
+        gen.push_back(lattice(random_para,ar/1000,fcc.lattice_sum));
         f<<0<<" "<<gen[i].genom[0]<<" "<<gen[i].genom[1]<<" "<<gen[i].genom[2]<<
            " "<<gen[i].genom[3]<<" "<<gen[i].genom[4]<<" "<<gen[i].lattice_sum<<
            " "<<gen[i].fitness<<"\n";
@@ -82,7 +67,9 @@ int main(){
     //perform evolution
     vector<vector<lattice>> Generations = {};
     Generations.push_back(gen);
-    for(int i = 0; i < n_generations; i++){
+    bool check = true;
+    int i=0;
+    while(check){
         vector<lattice> tmp_gen = {};
         //elithism: store the fittest in the new generation
         Generations[i] = sort_lattice_by_fitness(Generations[i]);
@@ -97,11 +84,19 @@ int main(){
                " "<<tmp_gen[j].fitness<<"\n";
         }
         Generations.push_back(tmp_gen);
+        Generations[i] = sort_lattice_by_fitness(Generations[i]);
+
+        if(Generations[i][n-1].fitness > 0.999){
+            check=false;
+        }else if(i >= n_generations){
+            check=false;
+        }else{
+            i++;
+        }
     }
     f.close();
-    Generations[n_generations] = sort_lattice_by_fitness(Generations[n_generations]);
-    lattice winner = Generations[n_generations][n - 1];
-    cout<<"x="<<winner.genom[0]<<" y="<<winner.genom[1]<<
+    lattice winner = Generations[i][n - 1];
+    cout<<endl<<"x="<<winner.genom[0]<<" y="<<winner.genom[1]<<
           " theta="<<winner.genom[2]<<" psi="<<winner.genom[3]<<
           " phi="<<winner.genom[4]<<
           " mit  DNA:"<<endl;
@@ -112,10 +107,25 @@ int main(){
     cout<<"x3 =("<<winner.x[2][0]<<","<<winner.x[2][1]<<","<<winner.x[2][2]<<")"<<endl;
     cout<<"fitness:"<<winner.fitness<<endl;
     cout<<"lattice sum:"<<winner.lattice_sum<<endl;
-
+    float angle_x1_x2 = acos((winner.x[0][0] * winner.x[1][0] + winner.x[0][1] * winner.x[1][1]
+                              + winner.x[0][2] * winner.x[1][2])/(skalar_product(winner.x[0])
+                                * skalar_product(winner.x[1])));
+    float angle_x1_x3 = acos((winner.x[0][0] * winner.x[2][0] + winner.x[0][1] * winner.x[2][1]
+                              + winner.x[0][2] * winner.x[2][2])/(skalar_product(winner.x[0])
+                                * skalar_product(winner.x[2])));
+    float angle_x2_x3 = acos((winner.x[2][0] * winner.x[1][0] + winner.x[2][1] * winner.x[1][1]
+                              + winner.x[2][2] * winner.x[1][2])/(skalar_product(winner.x[2])
+                                * skalar_product(winner.x[1])));
+    cout<<"|x1|="<<skalar_product(winner.x[0])<<endl;
+    cout<<"|x2|="<<skalar_product(winner.x[1])<<endl;
+    cout<<"|x3|="<<skalar_product(winner.x[2])<<endl;
+    cout<<"angle between x1 and x2 :"<<(angle_x1_x2/M_PI) * 180<<endl;
+    cout<<"angle between x1 and x3 :"<<(angle_x1_x3/M_PI) * 180<<endl;
+    cout<<"angle between x2 and x3 :"<<(angle_x2_x3/M_PI) * 180<<endl;
+    cout<<"----------ende Generation a="<<ar<<"------------------"<<endl<<endl;
 }
 
-#else
+//#else
 // ----------- find zero-points of the Rosenbrockfunktion ----------------
 int main()
 {

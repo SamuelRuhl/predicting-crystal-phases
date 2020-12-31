@@ -17,8 +17,8 @@ const int dna_length = 12;
 //const double lowest_fitness = 10e-20;
 //const int n=20; //dim of the generation
 //const int n_generations=100;
-const float a=3;
-const float b=-1.5;
+const float a=2;
+const float b=0;
 
 
 class Individual

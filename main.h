@@ -22,7 +22,7 @@ vector<Individual> sort_by_fitness(vector<Individual> I);
 lattice lattice_selection(vector<lattice> generation);
 vector<lattice> sort_lattice_by_fitness(vector<lattice> I);
 vector<float> cross_product(vector<float> a, vector<float> b);
-float vec_product(vector<float> a);
+float skalar_product(vector<float> a);
 float calc_surface(vector<vector<float>> x);
 vector<float> sum_vectors(vector<float> a, vector<float> b, char o);
 void print_vec(vector<float> a);

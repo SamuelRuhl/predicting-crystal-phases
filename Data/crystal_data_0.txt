@@ -1,0 +1,4 @@
+mutation probability per bit=0.01
+bias fitness=1e-19
+number of Individuals per Generation=1000
+number of Generations=100

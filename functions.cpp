@@ -86,22 +86,22 @@ vector <lattice> sort_lattice_by_fitness(vector<lattice> I){
 
 lattice lattice_selection(vector<lattice> generation){
     //calculate summit fitness and find the minima fitness by the way
-    double fit_sum = 0;
+    long double fit_sum = 0;
 
     for(int i = 0; i<int(generation.size());i++){
         fit_sum=fit_sum+generation[i].fitness;
         }
    //--------------------------wheel of fortune-------------------------
     auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
-    auto real_rand = std::bind(std::uniform_real_distribution<float>(0,1),
+    auto real_rand = std::bind(std::uniform_real_distribution<long double>(0,1),
                                mt19937(seed));
-    double r1 = real_rand();
+    long double r1 = real_rand();
     generation = sort_lattice_by_fitness(generation);
     //wenn es zu problemen kommt dann hier.
         //partner1
-        double sum=0;
+        long double sum=0;
         int iter=-1;
-        float r1_fit=fit_sum * r1;
+        long double r1_fit=fit_sum * r1;
         while(r1_fit>sum){
             iter++;
             sum=sum + generation[iter].fitness;
@@ -112,8 +112,8 @@ lattice lattice_selection(vector<lattice> generation){
         generation.erase(generation.begin()+iter);
         sum=0;
         iter=-1;
-        double r2 = real_rand();
-        float r2_fit=fit_sum * r2;
+        long double r2 = real_rand();
+        long double r2_fit=fit_sum * r2;
         while(r2_fit>=sum){
             iter++;
             sum=sum + generation[iter].fitness;
@@ -131,7 +131,7 @@ vector<float> cross_product(vector<float> a, vector<float> b){
     return c;
 }
 
-float vec_product(vector<float> a){
+float skalar_product(vector<float> a){
     float abs=0;
     for(int i=0; i < int(a.size()); i++){
         abs = abs + a[i] * a[i];
@@ -140,9 +140,9 @@ float vec_product(vector<float> a){
 }
 
 float calc_surface(vector<vector<float>> x){
-    return  (vec_product(cross_product(x[0],x[1]))
-           + vec_product(cross_product(x[0],x[2]))
-           + vec_product(cross_product(x[1],x[2])));
+    return  (skalar_product(cross_product(x[0],x[1]))
+           + skalar_product(cross_product(x[0],x[2]))
+           + skalar_product(cross_product(x[1],x[2])));
 }
 
 vector<float> sum_vectors(vector<float> a, vector<float> b, char o){

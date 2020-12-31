@@ -19,10 +19,10 @@ const int dna_length_phi = 6; //strain lenght for phi,psi and theta
 
 
 //general routine settings
-const float mutation_prob = 0.01;
-const double lowest_fitness = 10e-25;
+const float mutation_prob = 0.05;
+const double lowest_fitness = 10e-100;
 
-const int n=50; //Number of individuals per generation
+const int n=1000; //Number of individuals per generation
 const int n_generations=100; //Number of generations
 
 // Interval boarders for x and y
@@ -45,22 +45,22 @@ private:
     float b_max_12=pow(2,dna_length_x);
     float b_max_6=pow(2,dna_length_phi);
     int numb_para=5;
-    float rho;
+    float ar;
 public:
     //init: gets vector of lenght equal to number_para
-    lattice(vector<float> z,float density);
+    lattice(vector<float> z,double density, long double fcc);
 
     //attributes
     vector<float> genom; //vector of parameter x,y,theta,psi,phi in that order
     vector<vector<float>> x; //primitiv lattice vectors eq. (1) in ref.1
     vector<vector<char>> para_dna = {};
     vector<char> long_dna = {}; //all para DNA's attached to one
-    double lattice_sum;
+    long double lattice_sum;
     double surface;
-    double fitness;
-    double rel_fit; //relative fitness in ref. to the generation
+    long double fitness;
+    long double rel_fit; //relative fitness in ref. to the generation
     int generation;
-    double fcc_lattice_sum;
+    long double fcc_lattice_sum;
 
     //methods
     void set_dna();

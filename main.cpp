@@ -6,29 +6,30 @@ using namespace std;
 #if 1
 // ------------------ predicting crystal structures --------------------
 int main(){
-lattice fcc=lattice({1,1,M_PI/4,M_PI/2,M_PI/4},0.7,1);
-lattice bcc = lattice({1,1,0,0,0},0.7,1);
+lattice fcc=lattice({1,1,M_PI/4,M_PI/2,M_PI/4},0.4,1);
+lattice bcc = lattice({1,1,M_PI/2,3*M_PI/10,M_PI/6},0.4,1);
 fcc.print_x();
 bcc.print_x();
-cout<<setprecision(40);
+cout<<setprecision(8);
+cout<<pow(0.5,3)<<endl<<endl;
 cout<<fcc.lattice_sum<<endl;
-cout<<bcc.lattice_sum<<endl;
+cout<<bcc.lattice_sum<<endl<<endl;
+cout<<fcc.lattice_sum - bcc.lattice_sum<<endl<<endl;
 
 
 
 
 
 
-#else
 
     //run for rho [1,10]
-    for(float ar = 530; ar < 540; ar=ar + 5){
+    for(float ar = 500; ar <= 600 ; ar=ar + 20){
     //generate random Population
     lattice fcc=lattice({1,1,M_PI/4,M_PI/2,M_PI/4},ar/1000,1);
     cout<<"fcc lattice sum = "<<fcc.lattice_sum<<endl;
     cout<<"rho = "<< pow(ar/1000,3)<<endl;
     ofstream f;
-    string s = to_string(float(ar/18));
+    string s = to_string(float(ar));
     f.open("/Users/samuelruhl/predicting_crystal_structures/Data/crystal_data_"+s+".txt");
     f<<"mutation probability per bit="<<mutation_prob<<endl;
     f<<"bias fitness="<<lowest_fitness<<endl;
@@ -43,7 +44,7 @@ cout<<bcc.lattice_sum<<endl;
     //init random number generator
     auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
     //random number between 0 < x <= 1
-    auto x_y_rand = std::bind(std::uniform_real_distribution<float>(0.001,1),
+    auto x_y_rand = std::bind(std::uniform_real_distribution<float>(0,1),
                                mt19937(seed));
     //random number between 0 < phi <= pi/2
     auto theta_phi_rand = std::bind(std::uniform_real_distribution<float>(a_phi,b_phi),
@@ -85,10 +86,7 @@ cout<<bcc.lattice_sum<<endl;
         }
         Generations.push_back(tmp_gen);
         Generations[i] = sort_lattice_by_fitness(Generations[i]);
-
-        if(Generations[i][n-1].fitness > 0.999){
-            check=false;
-        }else if(i >= n_generations){
+        if(i >= n_generations){
             check=false;
         }else{
             i++;
@@ -108,24 +106,24 @@ cout<<bcc.lattice_sum<<endl;
     cout<<"fitness:"<<winner.fitness<<endl;
     cout<<"lattice sum:"<<winner.lattice_sum<<endl;
     float angle_x1_x2 = acos((winner.x[0][0] * winner.x[1][0] + winner.x[0][1] * winner.x[1][1]
-                              + winner.x[0][2] * winner.x[1][2])/(skalar_product(winner.x[0])
-                                * skalar_product(winner.x[1])));
+                              + winner.x[0][2] * winner.x[1][2])/(sqrt(skalar_product(winner.x[0]))
+                                * sqrt(skalar_product(winner.x[1]))));
     float angle_x1_x3 = acos((winner.x[0][0] * winner.x[2][0] + winner.x[0][1] * winner.x[2][1]
-                              + winner.x[0][2] * winner.x[2][2])/(skalar_product(winner.x[0])
-                                * skalar_product(winner.x[2])));
+                              + winner.x[0][2] * winner.x[2][2])/(sqrt(skalar_product(winner.x[0]))
+                                * sqrt(skalar_product(winner.x[2]))));
     float angle_x2_x3 = acos((winner.x[2][0] * winner.x[1][0] + winner.x[2][1] * winner.x[1][1]
-                              + winner.x[2][2] * winner.x[1][2])/(skalar_product(winner.x[2])
-                                * skalar_product(winner.x[1])));
-    cout<<"|x1|="<<skalar_product(winner.x[0])<<endl;
-    cout<<"|x2|="<<skalar_product(winner.x[1])<<endl;
-    cout<<"|x3|="<<skalar_product(winner.x[2])<<endl;
+                              + winner.x[2][2] * winner.x[1][2])/(sqrt(skalar_product(winner.x[2]))
+                                * sqrt(skalar_product(winner.x[1]))));
+    cout<<"|x1|="<<sqrt(skalar_product(winner.x[0]))<<endl;
+    cout<<"|x2|="<<sqrt(skalar_product(winner.x[1]))<<endl;
+    cout<<"|x3|="<<sqrt(skalar_product(winner.x[2]))<<endl;
     cout<<"angle between x1 and x2 :"<<(angle_x1_x2/M_PI) * 180<<endl;
     cout<<"angle between x1 and x3 :"<<(angle_x1_x3/M_PI) * 180<<endl;
     cout<<"angle between x2 and x3 :"<<(angle_x2_x3/M_PI) * 180<<endl;
     cout<<"----------ende Generation a="<<ar<<"------------------"<<endl<<endl;
 }
 
-//#else
+#else
 // ----------- find zero-points of the Rosenbrockfunktion ----------------
 int main()
 {

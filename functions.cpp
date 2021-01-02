@@ -136,13 +136,13 @@ float skalar_product(vector<float> a){
     for(int i=0; i < int(a.size()); i++){
         abs = abs + a[i] * a[i];
     }
-    return sqrt(abs);
+    return abs;
 }
 
 float calc_surface(vector<vector<float>> x){
-    return  (skalar_product(cross_product(x[0],x[1]))
-           + skalar_product(cross_product(x[0],x[2]))
-           + skalar_product(cross_product(x[1],x[2])));
+    return  (sqrt(skalar_product(cross_product(x[0],x[1])))
+           + sqrt(skalar_product(cross_product(x[0],x[2])))
+           + sqrt(skalar_product(cross_product(x[1],x[2]))));
 }
 
 vector<float> sum_vectors(vector<float> a, vector<float> b, char o){

@@ -19,23 +19,23 @@ const int dna_length_phi = 6; //strain lenght for phi,psi and theta
 
 
 //general routine settings
-const float mutation_prob = 0.05;
+const float mutation_prob = 0.01;
 const double lowest_fitness = 10e-100;
 
 const int n=1000; //Number of individuals per generation
 const int n_generations=100; //Number of generations
 
 // Interval boarders for x and y
-const float a_x=0.00025;
-const float b_x=1;
+const float a_x=1;
+const float b_x=0;
 
 // Interval boarders for theta and phi
 const float a_phi=M_PI/2;
-const float b_phi=0.025;
+const float b_phi=0;
 
 // Interval boarders for psi
 const float a_psi=M_PI;
-const float b_psi=0.05;
+const float b_psi=0;
 
 
 

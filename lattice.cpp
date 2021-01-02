@@ -133,24 +133,37 @@ void lattice::minimize_surface(){               //eq.(7) from ref.(1)
 
 void lattice::set_lattice_sum(){    // eq.(11) from ref.(1)
     long double L = 0;
-    int interaction_range = 5; //could also define as constant //8 gives the same value as 200
-    for(int l = 1; l < interaction_range; l++){
-        for(int k = 0; k < interaction_range; k++){
-            for(int m = 0; m < interaction_range; m++){
-                L = L + exp((-1/(ar*ar))*(l * l * skalar_product(x[0]) * skalar_product(x[0])
-                        + k * k * skalar_product(x[1]) * skalar_product(x[1])
-                        + m * m * skalar_product(x[2]) * skalar_product(x[2])));
+//    int interaction_range = 8; //could also define as constant //8 gives the same value as 200
+    int interaction_range_l = ceil(10./sqrt(x[0][0]*x[0][0] + x[0][1]*x[0][1] + x[0][2]*x[0][2]));
+    int interaction_range_k = ceil(10./sqrt(x[1][0]*x[1][0] + x[1][1]*x[1][1] + x[1][2]*x[1][2]));
+    int interaction_range_m = ceil(10./sqrt(x[2][0]*x[2][0] + x[2][1]*x[2][1] + x[2][2]*x[2][2]));
+
+    for(int l = 1; l < interaction_range_l; l++){
+        for(int k = 0; k < interaction_range_k; k++){
+            for(int m = 0; m < interaction_range_m; m++){
+                double lkm_x = l*x[0][0] + k*x[1][0] + m*x[2][0];
+                double lkm_y = l*x[0][1] + k*x[1][1] + m*x[2][1];
+                double lkm_z = l*x[0][2] + k*x[1][2] + m*x[2][2];
+                double r2 = lkm_x*lkm_x + lkm_y*lkm_y + lkm_z*lkm_z;
+                L = L + exp(-r2/(ar*ar));
             }
         }
     }
-    for(int k=1; k < interaction_range; k++ ){
-        for(int m=0; m < interaction_range; m++){
-            L = L + exp((-1/(ar*ar))*( k *k * skalar_product(x[1]) * skalar_product(x[1])   //(0,k,m)
-                   + m * m * skalar_product(x[2]) * skalar_product(x[2])));
+    for(int k=1; k < interaction_range_k; k++ ){
+        for(int m=0; m < interaction_range_m; m++){
+            double lkm_x = k*x[1][0] + m*x[2][0];
+            double lkm_y = k*x[1][1] + m*x[2][1];
+            double lkm_z = k*x[1][2] + m*x[2][2];
+            double r2 = lkm_x*lkm_x + lkm_y*lkm_y + lkm_z*lkm_z;
+            L = L + exp(-r2/(ar*ar));
         }
     }
-    for(int m=1; m < interaction_range; m++){
-        L = L + exp((-1/(ar*ar)) * m * m * skalar_product(x[2]) * skalar_product(x[2])); //(0,0,m)
+    for(int m=1; m < interaction_range_m; m++){
+        double lkm_x = m*x[2][0];
+        double lkm_y = m*x[2][1];
+        double lkm_z = m*x[2][2];
+        double r2 = lkm_x*lkm_x + lkm_y*lkm_y + lkm_z*lkm_z;
+        L = L + exp(-r2/(ar*ar));
     }
     lattice_sum = 2*L;
 }
